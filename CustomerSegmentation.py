@@ -5,10 +5,14 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import tkinter as tk
 from tkinter import filedialog, messagebox
-
+def browse_file():
+    file_path = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv")])
+    if file_path:
+        entry_file_path.delete(0, tk.END)
+        entry_file_path.insert(0, file_path)
 def load_and_cluster():
     try:
-        file_path = filedialog.askopenfilename()
+        file_path = entry_file_path.get()
         if file_path:
             df = pd.read_csv(file_path)
             if not all(col in df.columns for col in ['Gender', 'Age', 'Annual Income (₹)', 'Spending Score (1-100)']):
@@ -37,6 +41,7 @@ def load_and_cluster():
             plt.ylabel('Spending Score (1-100)')
             plt.legend()
             plt.show()
+
             messagebox.showinfo("Success", "Customer segmentation completed and visualized successfully.")
         else:
             messagebox.showwarning("Warning", "No file selected.")
@@ -44,6 +49,13 @@ def load_and_cluster():
         messagebox.showerror("Error", f"An error occurred: {str(e)}")
 root = tk.Tk()
 root.title("Customer Segmentation")
+label_file_path = tk.Label(root, text="CSV File Path:")
+label_file_path.pack(pady=5)
+
+entry_file_path = tk.Entry(root, width=50)
+entry_file_path.pack(pady=5)
+btn_browse = tk.Button(root, text="Browse", command=browse_file)
+btn_browse.pack(pady=5)
 btn_load = tk.Button(root, text="Load Data and Cluster", command=load_and_cluster)
 btn_load.pack(pady=20)
 root.mainloop()
